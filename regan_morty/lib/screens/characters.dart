@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-
+import 'package:regan_morty/model/character.dart';
 import 'package:regan_morty/model/character_card.dart';
 import 'package:regan_morty/model/character_change_notifier.dart';
+
 class CharacterScreen extends StatefulWidget {
   const CharacterScreen({super.key});
 
@@ -16,55 +16,48 @@ class CharacterScreen extends StatefulWidget {
 class _CharacterScreenState extends State<CharacterScreen> {
   @override
   void initState() {
-
     // TODO: implement initState
     super.initState();
+    getCharacterData();
     getHttp();
   }
-   String id='';
 
-   String name = "";
+  List<Character> characterlist = [];
+  String id = '';
 
-   String image='';
+  String name = "";
+
+  String image = '';
+
+  void getCharacterData() async {
+    var onse;
+    try {
+      onse = await Dio().get('https://rickandmortyapi.com/api/character');
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
+    setState(() {
+      for (int i = 0; i < 20; i++) {
+        characterlist.add(
+          Character(
+            image: onse.data['results'][i]['image'],
+            name: onse.data['results'][i]['name'],
+            id: onse.data['results'][i]['id'].toString(),
+          ),
+        );
+      }
+    });
+  }
 
   getHttp() async {
     try {
-
       Response response =
           await Dio().get('https://rickandmortyapi.com/api/character/2');
 
       final res = await Dio().get('https://rickandmortyapi.com/api/character');
-
-
-      
-      // if (kDebugMode) {
-      //   print(response);
-      // }
-
-      // var jsonData=jsonDecode(response.data) as Map<String , dynamic>;
-
-        // final d=jsonDecode(response.data).cast<Map<String, dynamic>>();
-
-
-
-       
-       
-       
-       
-       
-       
-       
-      //  print(response.data);
-
-      //  print(response.data['name']);
-      // setState(() {
-      //   name = response.data['name'];
-      // });
-
-        // Map<String,dynamic>map=jsonDecode(response.data);
-         // List<dynamic> data = jsonDecode(response.data);
-        //print(jsonData.toString());
-
 
       setState(() {
         name = response.data['name'];
@@ -80,14 +73,20 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Consumer<CharacterChangeNotifier>(
-      builder:(context,obj,child)=> Scaffold(
-        appBar: AppBar(),
-        body:ListView(children: [CharacterCard(id: id,name: name,image: image,)],)
-       
-      ),
+      builder: (context, obj, child) => Scaffold(
+          appBar: AppBar(),
+          body: ListView.builder(itemCount: characterlist.length,itemBuilder: (context, index) =>  CharacterCard(
+                id: characterlist[index].id,
+                name: characterlist[index].name,
+                image: characterlist[index].image,
+              ),
+
+              
+
+             
+           
+          )),
     );
   }
 }

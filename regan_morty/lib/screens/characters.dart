@@ -1,64 +1,92 @@
-import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
+import 'dart:convert';
 
-
-
-
+import 'package:regan_morty/model/character_card.dart';
+import 'package:regan_morty/model/character_change_notifier.dart';
 class CharacterScreen extends StatefulWidget {
-
-
-  CharacterScreen({super.key});
+  const CharacterScreen({super.key});
 
   @override
   State<CharacterScreen> createState() => _CharacterScreenState();
 }
 
 class _CharacterScreenState extends State<CharacterScreen> {
-  late String id;
+  @override
+  void initState() {
 
-  late String name;
+    // TODO: implement initState
+    super.initState();
+    getHttp();
+  }
+   String id='';
 
-  late String image;
+   String name = "";
+
+   String image='';
 
   getHttp() async {
     try {
-      final response =
+
+      Response response =
           await Dio().get('https://rickandmortyapi.com/api/character/2');
 
-//var jsonDe=response.data['name'];
+      final res = await Dio().get('https://rickandmortyapi.com/api/character');
+
+
+      
+      // if (kDebugMode) {
+      //   print(response);
+      // }
+
+      // var jsonData=jsonDecode(response.data) as Map<String , dynamic>;
+
+        // final d=jsonDecode(response.data).cast<Map<String, dynamic>>();
+
+
+
+       
+       
+       
+       
+       
+       
+       
+      //  print(response.data);
+
+      //  print(response.data['name']);
+      // setState(() {
+      //   name = response.data['name'];
+      // });
+
+        // Map<String,dynamic>map=jsonDecode(response.data);
+         // List<dynamic> data = jsonDecode(response.data);
+        //print(jsonData.toString());
 
 
       setState(() {
         name = response.data['name'];
-        image=response.data['image'];
-        id=response.data['id'].toString();
+        image = response.data['image'];
+        id = response.data['id'].toString();
       });
-
-
-
-     
-
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    getHttp();
+    
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: Card(
-        child: Column(
-          children: [
-            Text(name), 
-            Text(id),
-            Image.network(image),
-
-          ],
-        ),
+    return Consumer<CharacterChangeNotifier>(
+      builder:(context,obj,child)=> Scaffold(
+        appBar: AppBar(),
+        body:ListView(children: [CharacterCard(id: id,name: name,image: image,)],)
+       
       ),
     );
   }

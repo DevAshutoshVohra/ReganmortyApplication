@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:regan_morty/model/character_change_notifier.dart';
 
-class CharacterCard extends StatelessWidget {
+class CharacterCard extends StatefulWidget {
   CharacterCard(
       {super.key, required this.id, required this.name, required this.image});
 
@@ -10,6 +10,16 @@ class CharacterCard extends StatelessWidget {
   String id;
   String image;
 
+  @override
+  State<CharacterCard> createState() => _CharacterCardState();
+}
+
+class _CharacterCardState extends State<CharacterCard> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<CharacterChangeNotifier>(
@@ -21,9 +31,9 @@ class CharacterCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(name),
-            Text(id),
-            if (image.isNotEmpty) Image.network(image),
+            Text(widget.name),
+            Text(widget.id),
+            if (widget.image.isNotEmpty) Image.network(widget.image),
           ],
         ),
       ),

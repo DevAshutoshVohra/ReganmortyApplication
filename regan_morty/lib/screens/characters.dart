@@ -16,10 +16,9 @@ class CharacterScreen extends StatefulWidget {
 class _CharacterScreenState extends State<CharacterScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getCharacterData();
-    getHttp();
+
+    getCharacterData(1);
   }
 
   List<Character> characterlist = [];
@@ -29,15 +28,18 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   String image = '';
 
-  void getCharacterData() async {
+  void getCharacterData(int i) async {
     var onse;
     try {
-      onse = await Dio().get('https://rickandmortyapi.com/api/character');
+      onse =
+          await Dio().get('https://rickandmortyapi.com/api/character?page=$i');
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+    
+    characterlist.clear();
 
     setState(() {
       for (int i = 0; i < 20; i++) {
@@ -52,41 +54,65 @@ class _CharacterScreenState extends State<CharacterScreen> {
     });
   }
 
-  getHttp() async {
-    try {
-      Response response =
-          await Dio().get('https://rickandmortyapi.com/api/character/2');
+  // getHttp() async {
+  //   try {
+  //     Response response =
+  //         await Dio().get('https://rickandmortyapi.com/api/character/2');
 
-      final res = await Dio().get('https://rickandmortyapi.com/api/character');
+  //     final res = await Dio().get('https://rickandmortyapi.com/api/character');
 
-      setState(() {
-        name = response.data['name'];
-        image = response.data['image'];
-        id = response.data['id'].toString();
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
+  //     setState(() {
+  //       name = response.data['name'];
+  //       image = response.data['image'];
+  //       id = response.data['id'].toString();
+  //     });
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print(e);
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CharacterChangeNotifier>(
       builder: (context, obj, child) => Scaffold(
-          appBar: AppBar(),
-          body: ListView.builder(itemCount: characterlist.length,itemBuilder: (context, index) =>  CharacterCard(
-                id: characterlist[index].id,
-                name: characterlist[index].name,
-                image: characterlist[index].image,
+        appBar: AppBar(),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 5,
+              child: ListView.builder(
+                itemCount: characterlist.length,
+                itemBuilder: (context, index) => CharacterCard(
+                  id: characterlist[index].id,
+                  name: characterlist[index].name,
+                  image: characterlist[index].image,
+                ),
               ),
+            ),
+            // Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     ElevatedButton(onPressed: null, child: Text('Previous'),),
 
-              
-
-             
-           
-          )),
+            //     ElevatedButton(onPressed: null, child: Text('next'),),
+            //   ],
+            // )
+            Expanded(
+              flex: 1,
+              child: ListView.builder(
+                itemCount: 42,
+                itemBuilder: (context, index) => ElevatedButton(
+                    onPressed: () => setState(() {
+                          getCharacterData(index + 1);
+                        }),
+                    child: Text(index.toString())),
+                scrollDirection: Axis.horizontal,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:regan_morty/model/episode_card.dart';
 import 'package:regan_morty/model/episodeds.dart';
 
 class Episode extends StatefulWidget {
@@ -44,7 +45,7 @@ class _EpisodeState extends State<Episode> {
 
           episodeList.clear();
           for (int i = 0; i < 20; i++) {
-            episodeList.add(
+             episodeList.add(
                 EpisodeDs(air_date: air_date, episode: episode, name: name));
           }
         });
@@ -58,43 +59,18 @@ class _EpisodeState extends State<Episode> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          //rgb(64,64,64)
-          //rgb(67,66,64)
-          color: Colors.grey,
-          gradient: LinearGradient(colors: [
-            Color.fromARGB(66, 108, 123, 106),
-            Color.fromARGB(255, 10, 52, 2)
-          ])),
-      child: Column(
-        children: [
-          Text(
-            'Name : $name ',
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            itemCount: episodeList.length,
+            itemBuilder: (context, index) => EpisodeCard(
+                name: episodeList[index].name,
+                air_date: episodeList[index].air_date,
+                episode: episodeList[index].episode),
           ),
-          Text(
-            'Air Date : $air_date ',
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
-          ),
-          Text(
-            " Episode : $episode ",
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -38,16 +38,20 @@ class _CharacterScreenState extends State<CharacterScreen> {
         print(e);
       }
     }
+    
 
     characterlist.clear();
+
 
     setState(() {
       for (int i = 0; i < 20; i++) {
         characterlist.add(
           Character(
+
             image: onse.data['results'][i]['image'],
             name: onse.data['results'][i]['name'],
             id: onse.data['results'][i]['id'].toString(),
+          
           ),
         );
       }
@@ -76,9 +80,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<CharacterChangeNotifier>(
-      builder: (context, obj, child) => Scaffold(
-        appBar: AppBar(),
-        body: Column(
+      builder: (context, obj, child) => Column(
           children: [
             Expanded(
               flex: 5,
@@ -112,7 +114,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
             ),
           ],
         ),
-      ),
+      
     );
   }
 }

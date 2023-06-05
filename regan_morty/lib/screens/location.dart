@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:regan_morty/model/location_card.dart';
 import 'package:regan_morty/model/locationds.dart';
 
 class Location extends StatefulWidget {
@@ -13,8 +15,9 @@ class _LocationState extends State<Location> {
   @override
   void initState() {
     // TODO: implement initState
+    getLocation(1);
     super.initState();
-    getLocation();
+    
   }
 
   List<Locationds> locations = [];
@@ -24,85 +27,68 @@ class _LocationState extends State<Location> {
   String dimension = '';
   String residentNumber = '';
 
-  @override
-  void getLocation() async {
+  
+  void getLocation(int index) async {
+    
     var response;
     try {
-      response = await Dio().get('https://rickandmortyapi.com/api/location/3');
-      print(response.data);
-      // print(response.data['id']);
+      response =
+          await Dio().get('https://rickandmortyapi.com/api/location?page=$index');
+      // print(response.data);
+      // print(response.data['results'][0]);
     } catch (e) {
-      print(e);
+     if(kDebugMode){
+       print(e);
+     }
     }
     locations.clear();
 
     setState(() {
-      for(int i=0;i<20;i++){
-            id = response.data['id'].toString();
-      name = response.data['name'];
-      type = response.data['type'];
-      residentNumber = response.data['residents'].length.toString();
-      dimension = response.data['dimension'];
+      for (int i = 0; i < 20; i++) {
+        id = response.data['results'][i]['id'].toString();
+        name = response.data['results'][i]['name'];
+        type = response.data['results'][i]['type'];
+        residentNumber =
+            response.data['results'][i]['residents'].length.toString();
+        dimension = response.data['results'][i]['dimension'];
 
-      locations.add(Locationds(id: id, dimension: dimension, name: name, residentNumber: residentNumber, type: type));
-   
+        locations.add(Locationds(
+            id: id,
+            dimension: dimension,
+            name: name,
+            residentNumber: residentNumber,
+            type: type));
       }
-   });
+    });
   }
-
+@override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          //rgb(64,64,64)
-          //rgb(67,66,64)
-          color: Colors.grey,
-          gradient: LinearGradient(colors: [Colors.black26, Colors.blue])),
-      child: Column(
-        children: [
-          Text(
-            'id : $id',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
+    return Column(
+      children: [
+        Expanded(flex: 10,
+          child: ListView.builder(
+            itemCount: locations.length,
+            itemBuilder: (context, index) => LocationCard(
+                id: locations[index].id,
+                dimension: locations[index].dimension,
+                name: locations[index].name,
+                residentNumber: locations[index].name,
+                type: locations[index].type),
           ),
-          Text(
-            'Name : $name',
-            style: TextStyle(
-                color: Color.fromARGB(255, 83, 18, 224),
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
+        ),
+        Expanded(flex: 1,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 7,
+            itemBuilder: (context, index) => ElevatedButton(
+              onPressed: ()=>getLocation(index+1),
+              child: Text(
+                index.toString(),
+              ),
+            ),
           ),
-          Text(
-            'Type : $type',
-            style: TextStyle(
-                color: Color.fromARGB(255, 83, 18, 224),
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
-          ),
-          Text(
-            "dimension: $dimension",
-            style: TextStyle(
-                color: Color.fromARGB(255, 83, 18, 224),
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
-          ),
-          Text(
-            'Number of Residents : $residentNumber',
-            style: TextStyle(
-                color: Color.fromARGB(255, 83, 18, 224),
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic),
-          )
-        ],
-      ),
+        )
+      ],
     );
   }
 }

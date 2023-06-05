@@ -38,7 +38,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         print(e);
       }
     }
-    
+
 
     characterlist.clear();
 
@@ -83,7 +83,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
       builder: (context, obj, child) => Column(
           children: [
             Expanded(
-              flex: 5,
+              flex: 10,
               child: ListView.builder(
                 itemCount: characterlist.length,
                 itemBuilder: (context, index) => CharacterCard(
@@ -101,7 +101,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
             //   ],
             // )
             Expanded(
-              flex: 1,
+              flex:1 ,
               child: ListView.builder(
                 itemCount: 42,
                 itemBuilder: (context, index) => ElevatedButton(

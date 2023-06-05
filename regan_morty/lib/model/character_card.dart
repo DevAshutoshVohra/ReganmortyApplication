@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:regan_morty/model/character_change_notifier.dart';
 
+// ignore: must_be_immutable
 class CharacterCard extends StatefulWidget {
   CharacterCard(
       {super.key, required this.id, required this.name, required this.image});
@@ -16,10 +17,7 @@ class CharacterCard extends StatefulWidget {
 
 class _CharacterCardState extends State<CharacterCard> {
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {

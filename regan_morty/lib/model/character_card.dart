@@ -20,6 +20,7 @@ class _CharacterCardState extends State<CharacterCard> {
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CharacterChangeNotifier>(
@@ -27,6 +28,14 @@ class _CharacterCardState extends State<CharacterCard> {
         margin: const EdgeInsets.all(20),
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
+          gradient: LinearGradient(colors: [
+            Color.fromARGB(197, 237, 240, 243),
+            Color.fromARGB(199, 215, 139, 8)
+              // , Color.fromARGB(6, 67, 66, 64)
+          ]),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          //rgb(64,64,64)
+          //rgb(67,66,64)
           color: Colors.grey,
         ),
         child: Column(

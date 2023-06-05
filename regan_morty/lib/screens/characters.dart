@@ -38,7 +38,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         print(e);
       }
     }
-    
+
     characterlist.clear();
 
     setState(() {

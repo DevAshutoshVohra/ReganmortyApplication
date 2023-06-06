@@ -32,6 +32,7 @@ class _HomeState extends State<Home> {
         home: Scaffold(
           appBar: AppBar(
             title: const Text('Rick And Morty'),
+            
           ),
           bottomNavigationBar: NavigationBar(
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,

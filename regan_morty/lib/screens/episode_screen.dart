@@ -13,6 +13,8 @@ class Episode extends StatefulWidget {
 
 class _EpisodeState extends State<Episode> {
   @override
+  final controller = ScrollController();
+
   List<EpisodeDs> episodeList = [];
   bool isLoading = true;
   String air_date = '';
@@ -20,12 +22,32 @@ class _EpisodeState extends State<Episode> {
   String episode = '';
   int i = 1;
   void initState() {
+
     getResponse(i);
+
+      controller.addListener(() {
+        if(controller.position.maxScrollExtent==controller.offset){
+          if(kDebugMode){
+            print(controller.offset);
+
+          }
+
+          i++;
+          getResponse(i);
+        }
+      });
 
     super.initState();
   }
+  void dispose(){
+    controller.dispose();
+    super.dispose();
+  }
+
 
   void getResponse(int i) async {
+    if(i>3)return;
+
     Response response;
 
     try {
@@ -34,7 +56,7 @@ class _EpisodeState extends State<Episode> {
       if (kDebugMode) {
         setState(() {
           isLoading = false;
-          episodeList.clear();
+          //episodeList.clear();
           for (int i = 0; i < 20; i++) {
             name = response.data['results'][i]['name'];
             air_date = response.data['results'][i]['air_date'];
@@ -62,27 +84,20 @@ class _EpisodeState extends State<Episode> {
               Expanded(
                 flex: 10,
                 child: ListView.builder(
-                  itemCount: episodeList.length,
-                  itemBuilder: (context, index) => EpisodeCard(
-                      name: episodeList[index].name,
-                      air_date: episodeList[index].air_date,
-                      episode: episodeList[index].episode),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 3,
-                  itemBuilder: (context, index) => ElevatedButton(
-                    onPressed: () => setState(() {
-                      getResponse(index + 1);
+                    controller: controller,
+                    itemCount: episodeList.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < episodeList.length) {
+                        return EpisodeCard(
+                            name: episodeList[index].name,
+                            air_date: episodeList[index].air_date,
+                            episode: episodeList[index].episode);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     }),
-                    child: Text(
-                      index.toString(),
-                    ),
-                  ),
-                ),
               ),
             ],
           );

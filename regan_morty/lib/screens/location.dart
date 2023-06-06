@@ -13,11 +13,26 @@ class Location extends StatefulWidget {
 
 class _LocationState extends State<Location> {
   @override
+  final controller = ScrollController();
+  var i = 1;
   void initState() {
     // TODO: implement initState
-    getLocation(1);
+    getLocation(i);
+
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        i++;
+        getLocation(i);
+      }
+    });
     super.initState();
   }
+
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
 
   List<Locationds> locations = [];
   bool isLoading = true;
@@ -28,6 +43,7 @@ class _LocationState extends State<Location> {
   String residentNumber = '';
 
   void getLocation(int index) async {
+      if(i>7)return;
     var response;
     try {
       response = await Dio()
@@ -39,15 +55,14 @@ class _LocationState extends State<Location> {
         print(e);
       }
     }
-    locations.clear();
+    //locations.clear();
 
     setState(() {
-
       for (int i = 0; i < 20; i++) {
         id = response.data['results'][i]['id'].toString();
         name = response.data['results'][i]['name'];
         type = response.data['results'][i]['type'];
-        isLoading=false;
+        isLoading = false;
         residentNumber =
             response.data['results'][i]['residents'].length.toString();
         dimension = response.data['results'][i]['dimension'];
@@ -65,34 +80,44 @@ class _LocationState extends State<Location> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? Center(child: CircularProgressIndicator(),)
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
         : Column(
             children: [
               Expanded(
                 flex: 10,
                 child: ListView.builder(
-                  itemCount: locations.length,
-                  itemBuilder: (context, index) => LocationCard(
-                      id: locations[index].id,
-                      dimension: locations[index].dimension,
-                      name: locations[index].name,
-                      residentNumber: locations[index].name,
-                      type: locations[index].type),
-                ),
+                    controller: controller,
+                    itemCount: locations.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < locations.length) {
+                        return LocationCard(
+                            id: locations[index].id,
+                            dimension: locations[index].dimension,
+                            name: locations[index].name,
+                            residentNumber: locations[index].name,
+                            type: locations[index].type);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
               ),
-              Expanded(
-                flex: 1,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 7,
-                  itemBuilder: (context, index) => ElevatedButton(
-                    onPressed: () => getLocation(index + 1),
-                    child: Text(
-                      index.toString(),
-                    ),
-                  ),
-                ),
-              )
+              // Expanded(
+              //   flex: 1,
+              //   child: ListView.builder(
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: 7,
+              //     itemBuilder: (context, index) => ElevatedButton(
+              //       onPressed: () => getLocation(index + 1),
+              //       child: Text(
+              //         index.toString(),
+              //       ),
+              //     ),
+              //   ),
+              // )
             ],
           );
   }

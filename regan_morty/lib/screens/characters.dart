@@ -20,7 +20,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
     getCharacterData(1);
   }
-
+bool isLoading=true;
   List<Character> characterlist = [];
   String id = '';
 
@@ -44,6 +44,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
 
     setState(() {
+
       for (int i = 0; i < 20; i++) {
         characterlist.add(
           Character(
@@ -53,33 +54,17 @@ class _CharacterScreenState extends State<CharacterScreen> {
             id: onse.data['results'][i]['id'].toString(),
           
           ),
+          
         );
+        isLoading=false;
       }
     });
   }
 
-  // getHttp() async {
-  //   try {
-  //     Response response =
-  //         await Dio().get('https://rickandmortyapi.com/api/character/2');
-
-  //     final res = await Dio().get('https://rickandmortyapi.com/api/character');
-
-  //     setState(() {
-  //       name = response.data['name'];
-  //       image = response.data['image'];
-  //       id = response.data['id'].toString();
-  //     });
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       print(e);
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CharacterChangeNotifier>(
+    return isLoading?Center(child: CircularProgressIndicator(),): Consumer<CharacterChangeNotifier>(
       builder: (context, obj, child) => Column(
           children: [
             Expanded(
